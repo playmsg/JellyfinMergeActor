@@ -1,2 +1,3 @@
-# JellyfinMergeActor
-批量修改Jellyfin存储在nfo文件中的影星名字，主要是对应一些影星经常换名字
+# JellyfinMergeActor - 大枣Jellyfin明星姓名替换器
+批量修改Jellyfin存储在.nfo文件中的影星名字，主要是对应一些影星经常换名字。比如……算了就不举例子了，没有正经的名字。  
+用法很简单，先选中Jellyfin影片所在的根目录（可以多个），然后分别输入想要替换的原名和新名，再一戳“开始替换”按钮然后等着就OK了。 
