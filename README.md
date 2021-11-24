@@ -1,0 +1,2 @@
+# JellyfinMergeActor
+批量修改Jellyfin存储在nfo文件中的影星名字，主要是对应一些影星经常换名字
