@@ -4,11 +4,11 @@ name: getJavStar
 
 on:
   push:
-  pull_request:
-  fork:
-  watch:
-    types: [ started ]
-  schedule:
+  pull_request :
+    paths :
+    - 'getjavstar.py'
+
+schedule:
     - cron: 0 */6 * * *
 
 jobs:
@@ -18,24 +18,25 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
 
-      - name: Install Python
-        run: |
-          sudo apt update && \
-          sudo apt install python3
+    steps:
+    - name: Set Up Python
+    uses: actions/setup-python@v2
+    with:
+      python-version: 3.8
 
-      - name: Install python requests
-        run: |
-          pip3 install requests
-          
-      - name: runGetJavStar
-        run: |
-          python3 getjavstar.py
-      
-      - name: Upload jav star file
-        uses: actions/upload-artifact@v2
-        with:
-          name: gflist.txt
-          path: ./
+    - name: Install python requests
+      run: |
+        pip3 install requests
+
+    - name: runGetJavStar
+      run: |
+        python3 getjavstar.py
+
+    - name: Upload jav star file
+      uses: actions/upload-artifact@v2
+      with:
+        name: gflist
+        path: gflist.txt
