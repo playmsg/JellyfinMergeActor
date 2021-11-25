@@ -33,4 +33,9 @@ jobs:
       - name: runGetJavStar
         run: |
           python3 getjavstar.py
-          ls
+      
+      - name: Upload jav star file
+        uses: actions/upload-artifact@v2
+        with:
+          name: gflist.txt
+          path: ./
