@@ -35,8 +35,5 @@ jobs:
       run: |
         python3 getjavstar.py
 
-    - name: Upload jav star file
-      uses: actions/upload-artifact@v2
-      with:
-        name: gflist.txt
-        path: ${{ github.workspace }}\gflist.txt
+    - name: Copy jav star file
+      run: cp gflist.txt ${{ github.workspace }}
