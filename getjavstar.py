@@ -14,7 +14,6 @@ for i in info['Content']:
         j = j.replace('.jpg', '')
         jav.append(j)
 
-javStars = {}.fromkeys(jav).keys()
-
+javStars = list(set(jav))
 with open('gflist.txt', 'w', encoding='utf-8') as f:
-    f.write(javStars)
+    f.write('\n'.join(javStars))
