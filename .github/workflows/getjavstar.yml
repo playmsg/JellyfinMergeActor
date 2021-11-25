@@ -33,3 +33,4 @@ jobs:
       - name: runGetJavStar
         run: |
           python3 getjavstar.py
+          ls
