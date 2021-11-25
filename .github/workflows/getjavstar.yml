@@ -37,7 +37,7 @@ jobs:
 
     - name: commit
       run: |
-        git config --global user.email $GIT_EMAIL
-        git config --global user.name $GIT_NAME
+        git config --global user.email playmsg@gmail.com
+        git config --global user.name playmsg
         git add gflist.txt
         git commit -m "女忧姓名列表"
