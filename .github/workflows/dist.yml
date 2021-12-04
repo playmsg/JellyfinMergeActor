@@ -29,6 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
+          pip install --upgrade cx_Freeze
 
       - name: Build with PyInstaller for macos/ubuntu
         if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
@@ -38,8 +39,7 @@ jobs:
       - name: Build with PyInstaller for windows
         if: matrix.os == 'windows-latest'
         run: |
-          pyinstaller `
-            --onefile jellyfinstar.py
+          cxfreeze jellyfinstar.py
       - name: Copy gflist.txt
         run: |
           cp gflist.txt dist/
