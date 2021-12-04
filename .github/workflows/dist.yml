@@ -46,5 +46,5 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v1
         with:
-          name: JellyfinMergeActor-amd64
+          name: JellyfinMergeActor-${{ runner.os }}-amd64
           path: dist
