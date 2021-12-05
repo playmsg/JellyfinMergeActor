@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+      # pyside6的代码里有一部分似乎对python 3.8不太友好。另外是自己安装python还是用actions安装python……其实我不太清楚有什么区别
       - name: Setup Python
         uses: actions/setup-python@v2.3.1
         with:
@@ -27,8 +27,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          #pip install -r requirements.txt
+          # python -m pip install --upgrade pip
+          # pip install -r requirements.txt 不知为何，pyside6用requirements.txt安装就不成功，直接用pip install能成功。
           pip install pyside6
           pip install pyinstaller
 
@@ -48,7 +48,7 @@ jobs:
         run: |
           cp gflist.txt dist/
       - name: Upload build artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.2.4
         with:
           name: JellyfinMergeActor-${{ runner.os }}-amd64
           path: dist
