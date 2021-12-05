@@ -29,17 +29,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-          pip install --upgrade cx_Freeze
 
       - name: Build with PyInstaller for macos/ubuntu
-        if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+        #if: matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'
+        # pyinstaller在linux下打包qt for python 6有问题，打包出来的文件不能执行。用cx_freeze可以打包，不过不能生成单一文件（其实生成的单一文件有时候反病毒会报警）
+        # macos的还没测试过，按理说qt应该也有问题
+        if: matrix.os == 'macos-latest'
         run: |
           pyinstaller \
             --onefile jellyfinstar.py \
       - name: Build with PyInstaller for windows
         if: matrix.os == 'windows-latest'
         run: |
-          cxfreeze jellyfinstar.py
+          pyinstaller `
+            --onefile jellyfinstar.py
       - name: Copy gflist.txt
         run: |
           cp gflist.txt dist/
