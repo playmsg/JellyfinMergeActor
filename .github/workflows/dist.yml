@@ -38,13 +38,12 @@ jobs:
         # macos的还没测试过，按理说qt应该也有问题
         if: matrix.os == 'macos-latest'
         run: |
-          pyinstaller \
-            --onefile jellyfinstar.py \
+          pyinstaller -F -w jellyfinstar.py
+          
       - name: Build with PyInstaller for windows
         if: matrix.os == 'windows-latest'
         run: |
-          pyinstaller `
-            --onefile jellyfinstar.py
+          pyinstaller -F -w jellyfinstar.py
       - name: Copy gflist.txt
         run: |
           cp gflist.txt dist/
