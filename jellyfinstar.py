@@ -5,7 +5,8 @@ import time
 from main import Ui_MainWindow
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QFileDialog, QMessageBox, QCompleter)
-from PySide6.QtCore import (QStringListModel, QThread,)
+from PySide6.QtCore import (QObject, QStringListModel, QThread, Signal)
+
 
 
 class MainWindow(QMainWindow):
@@ -21,8 +22,10 @@ class MainWindow(QMainWindow):
             self.on_pushButton_3_clicked)  # 执行按钮
         aboutmeText = '欢迎使用大枣系列小工具'
         # 设置下面状态条内容
+        self.ui.statusbar.size
         self.ui.statusbar.setStyleSheet("QStatusBar::item{border: 1px}")
         self.msg = QLabel(aboutmeText)
+        self.msg.setScaledContents(True)
         self.ui.statusbar.addPermanentWidget(self.msg)
 
         # 初始化目录列表
@@ -58,24 +61,40 @@ class MainWindow(QMainWindow):
         self.saveDirList()
 
     def on_pushButton_3_clicked(self):
-        start = time.perf_counter()
         dirs = self.slm.stringList()
+        self.threadCount = len(dirs)
+        self.totalRuntime = float(0)
+        self.start = time.time()
         if str.strip(self.ui.lineEdit_2.text()) != '' and str.strip(self.ui.lineEdit.text()) != '':
             oldstar = self.ui.lineEdit_2.text()
             newstar = self.ui.lineEdit.text()
             aboutmeText = '开始更新影星姓名'
             self.msg.setText(aboutmeText)
+            self.ui.pushButton_3.setEnabled(False)
             for baseDir in dirs:
-                works = chgWork(baseDir, oldstar, newstar)
-                works.start()
-                works.wait()
-            end = time.perf_counter()
-            #print('Running time: %s Seconds' % (end-start))
-            aboutmeText = '更新结束 共用时 %s 秒' % format((end-start), '.3f')
-            self.msg.setText(aboutmeText)
-
+                self.works = chgWork(baseDir, oldstar, newstar)
+                self.worksThread = QThread(self)
+                self.works.moveToThread(self.worksThread)
+                self.works.fin.connect(self.finish)
+                self.worksThread.started.connect(self.works.do)
+                self.worksThread.start()
+                # 不知为何，如果此处不暂停一下再新建线程，会莫名其妙的有线程不能被建立
+                time.sleep(0.1)
+                self.worksThread.exit(0)
+                QApplication.processEvents()
         else:
             QMessageBox.warning(self, "你有压力", "得先输入新旧影星名字")
+
+    def finish(self, s):
+        self.totalRuntime += s['time']
+        self.threadCount -= 1
+        aboutmeText = s['dirPath'] + ' 完成'
+        self.msg.setText(aboutmeText)
+        QApplication.processEvents()
+        if self.threadCount == 0:
+            self.ui.pushButton_3.setEnabled(True)
+            aboutmeText = '更新结束 共用时 %s 秒' % format(self.totalRuntime, '.2f')
+            self.msg.setText(aboutmeText)
 
     def saveDirList(self):
         with open('dirList.txt', 'w', encoding='utf-8') as f:
@@ -83,15 +102,22 @@ class MainWindow(QMainWindow):
                 f.write(self.slm.data(self.slm.index(index)) + '\n')
 
 
-class chgWork(QThread):
+class chgWork(QObject):
+    fin = Signal(dict)
+
     def __init__(self, dirPath, oldStar, newStar):
         super(chgWork, self).__init__()
         self.dirPath = dirPath
         self.oldStar = oldStar
         self.newStar = newStar
 
-    def run(self):
+    def do(self):
+        start = time.time()
         changeStarName(self.dirPath, self.oldStar, self.newStar)
+        end = time.time()
+        res = {'dirPath': self.dirPath,
+               'time': end-start}
+        self.fin.emit(res)
 
 
 def changeStarName(dirPath, oldStar, newStar):
