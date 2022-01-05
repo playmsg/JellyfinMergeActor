@@ -2,11 +2,12 @@ import sys
 import os
 import xml.etree.cElementTree as ET
 import time
+from pathlib import Path
 from main import Ui_MainWindow
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QLabel, QFileDialog, QMessageBox, QCompleter)
 from PySide6.QtCore import (QObject, QStringListModel, QThread, Signal)
-
+# import pysnooper
 
 
 class MainWindow(QMainWindow):
@@ -120,33 +121,27 @@ class chgWork(QObject):
         self.fin.emit(res)
 
 
+# @pysnooper.snoop()
 def changeStarName(dirPath, oldStar, newStar):
     res = walkFile(dirPath)
     oldstar = oldStar
     newstar = newStar
     for nfo in res:
-        tree = ET.ElementTree(file=nfo)
+        tree = ET.ElementTree(file=nfo.absolute())
         root = tree.getroot()
         nfores = root.findall('./actor/name')
         for n in nfores:
             if n.text == oldstar:
-                print(nfo+' '+n.text)
                 n.text = newstar
-                print(n.text)
+                tree.write(nfo.absolute(), encoding="utf-8",
+                           xml_declaration=True)
 
 # 遍历文件夹
 
 
 def walkFile(file):
-    fullFilePath = []
-    for root, dirs, files in os.walk(file):
-        # 遍历文件
-        for f in files:
-            if f.endswith('.nfo'):
-                sourceFileName = os.path.abspath(root)+'/'+f
-                sourceFileName = sourceFileName.replace('\\', '/')
-                fullFilePath.append(sourceFileName)
-    return fullFilePath
+    rootdir = Path(file)
+    return list(rootdir.glob('**/*.nfo'))
 
 
 if __name__ == "__main__":
